@@ -12,15 +12,56 @@ const getDtpChart = (request, response) => {
     let region_code = request.query.region_code;
     let start_date = request.query.start_date;
     let end_date = request.query.end_date;
+    let victim = request.query.victim;
+
+    if(start_date === undefined || end_date === undefined){
+        end_date = Date.now();
+        start_date = new Date(Date.now() - 604800000).toISOString();
+        end_date = new Date(Date.now()).toISOString();
+
+        start_date = '2022-01-01 00:00:00';
+        end_date = '2022-01-14 00:00:00';
+    }
+
+    if(victim === undefined){
+        victim='0';
+    }
+
 
     // console.log("region_code: "+region_code);
     // console.log("start_date: "+start_date);
     // console.log("end_date: "+end_date);
 
-    let query = 'SELECT CAST(date As Date) as xCoords, COUNT(id) as yCoords  \n' +
-        '\tFROM public."DTPCard"\n' +
-        'where region_id = (select id from public."Regions" where region_code = '+region_code+')  and date between \''+start_date+'\' and \''+end_date+'\'\n' +
-        'GROUP BY CAST(date As Date);'
+    let victim_addtitional = '';
+    if(victim === '0'){ //all
+
+    }else if(victim === '1'){ //no injured
+        victim_addtitional = 'and pog = 0 and ran = 0 ';
+    }else if(victim === '2'){ // injured but alive
+        victim_addtitional = 'and pog = 0 and ran > 0 ';
+    }else if(victim === '3'){ // letal
+        victim_addtitional = 'and pog > 0 ';
+    }
+
+
+    let query;
+    if(region_code === undefined){
+
+        query = 'SELECT CAST(date As Date) as xCoords, COUNT(id) as yCoords  \n' +
+            '\tFROM public."DTPCard"\n' +
+            'where region_id in (select id from public."Regions")  '+victim_addtitional+'and date between \''+start_date+'\' and \''+end_date+'\'\n';
+    }else{
+        query = 'SELECT CAST(date As Date) as xCoords, COUNT(id) as yCoords  \n' +
+            '\tFROM public."DTPCard"\n' +
+            'where region_id in ('+region_code+')  '+victim_addtitional+' and date between \''+start_date+'\' and \''+end_date+'\'\n';
+
+    }
+
+
+    query+='GROUP BY CAST(date As Date);';
+
+    console.log(query);
+
 
     pool.query(query, (error, results) => {
         if (error) {
@@ -29,7 +70,7 @@ const getDtpChart = (request, response) => {
 
         let result = {
             isSuccess: true,
-            message: "",
+            message: "?",
             data: {
                 coords:results.rows
             }
@@ -37,6 +78,66 @@ const getDtpChart = (request, response) => {
 
         response.status(200).json(result);
     });
+};
+
+const getAnalysisFactorChart = (request, response) => {
+
+    let analysis_factor_id = request.query.analysis_factor_id;
+    let start_date = request.query.start_date;
+    let end_date = request.query.end_date;
+
+
+
+    if(analysis_factor_id === undefined){
+        let result = {
+            isSuccess: false,
+            message: "Can't create query! Need "+'analysis_factor_id parameter',
+        };
+        response.status(500).json(result);
+    } else if(start_date === undefined){
+        let result = {
+            isSuccess: false,
+            message: "Can't create query! Need "+'start_date parameter',
+        };
+        response.status(500).json(result);
+    }else if(end_date === undefined){
+        let result = {
+            isSuccess: false,
+            message: "Can't create query! Need "+'end_date parameter',
+        };
+        response.status(500).json(result);
+    }else {
+
+        let query = 'SELECT *  \n' +
+            '\tFROM public."factor_data"\n' +
+            'where analysis_factor_id in (' + analysis_factor_id + ')  and date between \'' + start_date + '\' and \'' + end_date + '\'\n' +
+            ';'
+
+        console.error(query);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                throw error;
+            }
+
+            let result = {
+                isSuccess: true,
+                message: "???",
+                data: {
+                    coords: results.rows
+                }
+            };
+
+            response.status(200).json(result);
+        });
+    }
+};
+
+const getAnalysisFactorChartStub = (request, response) => {
+
+    let result =
+        {"isSuccess":true,"message":"","data":{"coords":[{"id":0,"origin_value":5,"value":null,"analysis_factor_id":1,"date":"2021-12-31T21:00:00.000Z","created_at":"2021-12-31T21:00:00.000Z","updated_at":"2021-12-31T21:00:00.000Z","deleted_at":null},{"id":1,"origin_value":7,"value":null,"analysis_factor_id":1,"date":"2022-01-01T21:00:00.000Z","created_at":"2022-01-01T21:00:00.000Z","updated_at":"2022-01-01T21:00:00.000Z","deleted_at":null},{"id":2,"origin_value":3,"value":null,"analysis_factor_id":1,"date":"2022-01-02T21:00:00.000Z","created_at":"2022-01-02T21:00:00.000Z","updated_at":"2022-01-02T21:00:00.000Z","deleted_at":null},{"id":3,"origin_value":1,"value":null,"analysis_factor_id":1,"date":"2022-01-03T21:00:00.000Z","created_at":"2022-01-03T21:00:00.000Z","updated_at":"2022-01-03T21:00:00.000Z","deleted_at":null},{"id":4,"origin_value":8,"value":null,"analysis_factor_id":1,"date":"2022-01-04T21:00:00.000Z","created_at":"2022-01-04T21:00:00.000Z","updated_at":"2022-01-04T21:00:00.000Z","deleted_at":null}]}};
+    response.status(200).json(result);
 };
 
 const getDtpChartStub = (request, response) => {
@@ -227,5 +328,7 @@ module.exports = {
     getRegionsStub,
     getFactorListStub,
     getAnalysisFactorList,
-    getAnalysisFactorListStub
+    getAnalysisFactorListStub,
+    getAnalysisFactorChart,
+    getAnalysisFactorChartStub
 };
