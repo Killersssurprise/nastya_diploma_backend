@@ -9,6 +9,7 @@ const pool = new Pool({
 
 const getDtpChart = (request, response) => {
 
+    //TODO factor_dtp_id
     let region_code = request.query.region_code;
     let start_date = request.query.start_date;
     let end_date = request.query.end_date;
@@ -108,7 +109,7 @@ const getAnalysisFactorChart = (request, response) => {
         response.status(500).json(result);
     }else {
 
-        let query = 'SELECT *  \n' +
+        let query = 'SELECT CAST(date as Date) as xCoords, origin_value as yCoords  \n' +
             '\tFROM public."factor_data"\n' +
             'where analysis_factor_id in (' + analysis_factor_id + ')  and date between \'' + start_date + '\' and \'' + end_date + '\'\n' +
             ';'
@@ -136,7 +137,7 @@ const getAnalysisFactorChart = (request, response) => {
 const getAnalysisFactorChartStub = (request, response) => {
 
     let result =
-        {"isSuccess":true,"message":"","data":{"coords":[{"id":0,"origin_value":5,"value":null,"analysis_factor_id":1,"date":"2021-12-31T21:00:00.000Z","created_at":"2021-12-31T21:00:00.000Z","updated_at":"2021-12-31T21:00:00.000Z","deleted_at":null},{"id":1,"origin_value":7,"value":null,"analysis_factor_id":1,"date":"2022-01-01T21:00:00.000Z","created_at":"2022-01-01T21:00:00.000Z","updated_at":"2022-01-01T21:00:00.000Z","deleted_at":null},{"id":2,"origin_value":3,"value":null,"analysis_factor_id":1,"date":"2022-01-02T21:00:00.000Z","created_at":"2022-01-02T21:00:00.000Z","updated_at":"2022-01-02T21:00:00.000Z","deleted_at":null},{"id":3,"origin_value":1,"value":null,"analysis_factor_id":1,"date":"2022-01-03T21:00:00.000Z","created_at":"2022-01-03T21:00:00.000Z","updated_at":"2022-01-03T21:00:00.000Z","deleted_at":null},{"id":4,"origin_value":8,"value":null,"analysis_factor_id":1,"date":"2022-01-04T21:00:00.000Z","created_at":"2022-01-04T21:00:00.000Z","updated_at":"2022-01-04T21:00:00.000Z","deleted_at":null}]}};
+        {"isSuccess":true,"message":"???","data":{"coords":[{"xcoords":"2021-12-31T21:00:00.000Z","ycoords":5},{"xcoords":"2022-01-01T21:00:00.000Z","ycoords":7},{"xcoords":"2022-01-02T21:00:00.000Z","ycoords":3},{"xcoords":"2022-01-03T21:00:00.000Z","ycoords":1},{"xcoords":"2022-01-04T21:00:00.000Z","ycoords":8}]}};
     response.status(200).json(result);
 };
 
@@ -188,6 +189,7 @@ const getFactorList = (request, response) => {
     });
 };
 
+//TODO add crud
 const getAnalysisFactorList = (request, response) => {
     pool.query('SELECT * FROM public."analysis_factors" ORDER BY id ASC', (error, results) => {
         if (error) {
