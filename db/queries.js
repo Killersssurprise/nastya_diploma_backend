@@ -14,6 +14,7 @@ const getDtpChart = (request, response) => {
     let start_date = request.query.start_date;
     let end_date = request.query.end_date;
     let victim = request.query.victim;
+    let factor_dtp_id = request.query.factor_dtp_id;
 
     if(start_date === undefined || end_date === undefined){
         end_date = Date.now();
@@ -26,6 +27,11 @@ const getDtpChart = (request, response) => {
 
     if(victim === undefined){
         victim='0';
+    }
+
+    let factor_dtp_additional = '';
+    if(factor_dtp_id !== undefined){
+        factor_dtp_additional +='and id in (select card_id from factor_ref where factor_id in ('+factor_dtp_id+'))';
     }
 
 
@@ -50,11 +56,11 @@ const getDtpChart = (request, response) => {
 
         query = 'SELECT CAST(date As Date) as xCoords, COUNT(id) as yCoords  \n' +
             '\tFROM public."DTPCard"\n' +
-            'where region_id in (select id from public."Regions")  '+victim_addtitional+'and date between \''+start_date+'\' and \''+end_date+'\'\n';
+            'where region_id in (select id from public."Regions")  '+factor_dtp_additional+' '+victim_addtitional+'and date between \''+start_date+'\' and \''+end_date+'\'\n';
     }else{
         query = 'SELECT CAST(date As Date) as xCoords, COUNT(id) as yCoords  \n' +
             '\tFROM public."DTPCard"\n' +
-            'where region_id in ('+region_code+')  '+victim_addtitional+' and date between \''+start_date+'\' and \''+end_date+'\'\n';
+            'where region_id in ('+region_code+')  '+factor_dtp_additional+' '+victim_addtitional+' and date between \''+start_date+'\' and \''+end_date+'\'\n';
 
     }
 
