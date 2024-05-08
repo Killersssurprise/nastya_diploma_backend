@@ -397,7 +397,7 @@ const getAnalysisFactorStub = (request, response) => {
             "data": [{
                 "id": 1,
                 "name": "Первый фактор",
-                "formula_id": 0,
+                "analysis_method_id": 0,
                 "created_at": "2021-12-31T21:00:00.000Z",
                 "updated_at": "2021-12-31T21:00:00.000Z",
                 "deleted_at": null,
@@ -497,7 +497,7 @@ const updateAnalysisFactor = (request, response) => {
 
     const factor = request.body;
     let name = factor.name;
-    let formula_id = factor.formula_id;
+    let analysis_method_id = factor.analysis_method_id;
     let data_file_path = factor.data_file_path;
 
     let query = 'UPDATE public.analysis_factors\n' +
@@ -518,8 +518,8 @@ const updateAnalysisFactor = (request, response) => {
         additional += 'name=\'' + name + '\',';
     }
 
-    if (formula_id !== undefined) {
-        additional += 'formula_id=\'' + formula_id + '\',';
+    if (analysis_method_id !== undefined) {
+        additional += 'analysis_method_id=\'' + analysis_method_id + '\',';
     }
 
     if (data_file_path !== undefined) {
@@ -576,7 +576,7 @@ const getAnalysisFactorListStub = (request, response) => {
         "data": [{
             "id": 1,
             "name": "Первый фактор",
-            "formula_id": 0,
+            "analysis_method_id": 0,
             "created_at": "2021-12-31T21:00:00.000Z",
             "updated_at": "2021-12-31T21:00:00.000Z",
             "deleted_at": null,
@@ -584,7 +584,7 @@ const getAnalysisFactorListStub = (request, response) => {
         }, {
             "id": 2,
             "name": "Второй фактор",
-            "formula_id": 0,
+            "analysis_method_id": 0,
             "created_at": "2021-12-31T21:00:00.000Z",
             "updated_at": "2021-12-31T21:00:00.000Z",
             "deleted_at": null,
@@ -592,7 +592,7 @@ const getAnalysisFactorListStub = (request, response) => {
         }, {
             "id": 3,
             "name": "Третий фактор",
-            "formula_id": 0,
+            "analysis_method_id": 0,
             "created_at": "2021-12-31T21:00:00.000Z",
             "updated_at": "2021-12-31T21:00:00.000Z",
             "deleted_at": null,
@@ -839,7 +839,258 @@ const getFactorListStub = (request, response) => {
     response.status(200).json(result);
 };
 
+///
+const getAnalysisMethod = (request, response) => {
+    const {id} = request.params;
 
+    let query = 'SELECT * FROM public."analysis_methods" where id =' + id;
+    console.log(query);
+
+    pool.query(query, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        let result = {
+            isSuccess: true,
+            message: "",
+            data: results.rows
+        };
+
+        response.status(200).json(result);
+    });
+};
+const getAnalysisMethodStub = (request, response) => {
+    let result =
+        {
+            "isSuccess": true,
+            "message": "",
+            "data": [
+                {
+                    "id": 0,
+                    "name": "первая формула",
+                    "formula": "a*b*c",
+                    "created_at": "2024-05-08T13:03:12.114Z",
+                    "updated_at": "2024-05-08T13:03:57.448Z",
+                    "deleted_at": null
+                }
+            ]
+        };
+    response.status(200).json(result);
+};
+
+const createAnalysisMethod = (request, response) => {
+    const method = request.body;
+
+    let name = method.name;
+    let formula = method.formula;
+
+    if (name === undefined || name === '') {
+        let result = {
+            isSuccess: false,
+            message: "Body parameter name is wrong",
+        };
+        response.status(300).json(result);
+    } else if (formula === undefined || formula === '') {
+        let result = {
+            isSuccess: false,
+            message: "Body parameter formula is wrong",
+        };
+        response.status(300).json(result);
+    } else {
+        let query = 'INSERT INTO public.analysis_methods(name, formula, created_at, updated_at) ' +
+            '\tVALUES (\'' + name + '\', \'' + formula + '\',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);';
+        console.log(query);
+
+        pool.query(query, (error, results) => {
+            if (error) {
+                throw error;
+            }
+            let result = {
+                isSuccess: true,
+                message: "",
+                data: results.rows
+            };
+
+            response.status(200).json(result);
+        });
+    }
+};
+
+const createAnalysisMethodStub = (request, response) => {
+    const factor = request.body;
+
+    let name = factor.name;
+    let formula = factor.formula;
+
+    if (name === undefined || name === '') {
+        let result = {
+            isSuccess: false,
+            message: "Body parameter name is wrong",
+        };
+        response.status(300).json(result);
+    } else if (formula === undefined || formula === '') {
+        let result = {
+            isSuccess: false,
+            message: "Body parameter formula is wrong",
+        };
+        response.status(300).json(result);
+    } else {
+
+        let result = {
+            isSuccess: true,
+            message: "test ok",
+        };
+
+        response.status(200).json(result);
+    }
+};
+
+const deleteAnalysisMethod = (request, response) => {
+    const {id} = request.params;
+
+    let query = 'DELETE FROM public."analysis_methods" where id =' + id;
+    console.log(query);
+
+    pool.query(query, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        let result = {
+            isSuccess: true,
+            message: "",
+            data: results.rows
+        };
+
+        response.status(200).json(result);
+    });
+};
+
+const deleteAnalysisMethodStub = (request, response) => {
+    const {id} = request.params;
+
+    let result = {
+        isSuccess: true,
+        message: "Test delete ok"
+    };
+
+    response.status(200).json(result);
+
+};
+
+const updateAnalysisMethod = (request, response) => {
+    const {id} = request.params;
+
+    const factor = request.body;
+    let name = factor.name;
+    let formula = factor.formula;
+
+    let query = 'UPDATE public.analysis_methods\n' +
+        'SET updated_at=CURRENT_TIMESTAMP,\n';
+
+    if (id === undefined || id === '') {
+        let result = {
+            isSuccess: true,
+            message: "Wrong parameter id!",
+        };
+        response.status(300).json(result);
+        return;
+    }
+
+    let additional = '';
+
+    if (name !== undefined) {
+        additional += 'name=\'' + name + '\',';
+    }
+
+    if (formula !== undefined) {
+        additional += 'formula=\'' + formula + '\',';
+    }
+
+
+    if (additional.toString().endsWith(',')) {
+        additional = additional.substring(0, additional.length - 1);
+    }
+
+    query += additional;
+    query += '\t where id =' + id;
+    console.log(query);
+
+    pool.query(query, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        let result = {
+            isSuccess: true,
+            message: "",
+            data: results.rows
+        };
+
+        response.status(200).json(result);
+    });
+};
+
+const updateAnalysisMethodStub = (request, response) => {
+    const {id} = request.params;
+
+    if (id === undefined || id === '') {
+        let result = {
+            isSuccess: true,
+            message: "Wrong parameter id!",
+        };
+        response.status(300).json(result);
+        return;
+    }
+
+    let result = {
+        isSuccess: true,
+        message: ""
+    };
+
+    response.status(200).json(result);
+
+};
+
+const getAnalysisMethodListStub = (request, response) => {
+    let result = {
+        "isSuccess": true,
+        "message": "",
+        "data": [
+            {
+                "id": 0,
+                "name": "первая формула",
+                "formula": "a*b*c",
+                "created_at": "2024-05-08T13:03:12.114Z",
+                "updated_at": "2024-05-08T13:03:57.448Z",
+                "deleted_at": null
+            },
+            {
+                "id": 1,
+                "name": "вторая формула",
+                "formula": "a*b",
+                "created_at": "2024-05-08T13:05:19.755Z",
+                "updated_at": "2024-05-08T13:05:19.755Z",
+                "deleted_at": null
+            }
+        ]
+    };
+    response.status(200).json(result);
+};
+
+const getAnalysisMethodList = (request, response) => {
+    pool.query('SELECT * FROM public."analysis_methods" ORDER BY id ASC', (error, results) => {
+        if (error) {
+            throw error;
+        }
+        let result = {
+            isSuccess: true,
+            message: "",
+            data: results.rows
+        };
+
+        response.status(200).json(result);
+    });
+};
+///
 const getRegionsStub = (request, response) => {
     let result = {
         "isSuccess": true,
@@ -1570,5 +1821,15 @@ module.exports = {
     deleteAnalysisFactor,
     deleteAnalysisFactorStub,
     updateAnalysisFactorStub,
-    updateAnalysisFactor
+    updateAnalysisFactor,
+    getAnalysisMethod,
+    getAnalysisMethodStub,
+    createAnalysisMethod,
+    createAnalysisMethodStub,
+    deleteAnalysisMethod,
+    deleteAnalysisMethodStub,
+    updateAnalysisMethod,
+    updateAnalysisMethodStub,
+    getAnalysisMethodListStub,
+    getAnalysisMethodList
 };

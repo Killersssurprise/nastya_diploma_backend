@@ -1,4 +1,5 @@
 var factorRoutes = require('./analysis_factors');
+var methodRoutes = require('./analysis_methods');
 var express = require('express');
 var router = express.Router();
 const db = require('../db/queries');
@@ -32,7 +33,7 @@ router.get('/api/dtp-chart', function (req, res, next) {
 });
 
 router.use('/api/analysis-factor', factorRoutes);
-
+router.use('/api/analysis-methods', methodRoutes);
 router.get('/api/injured-list', function (req, res, next) {
     //console.error(db.getVersion());
     //console.error("I in");
