@@ -1,3 +1,4 @@
+var factorRoutes = require('./analysis_factors');
 var express = require('express');
 var router = express.Router();
 const db = require('../db/queries');
@@ -6,6 +7,7 @@ const read_excel = require('../utils/read_excel');
 var path = require('path');
 
 let debug = false;
+exports.isDebug = () => debug;
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -14,53 +16,27 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/api/regions', function (req, res, next) {
-    //console.error(db.getVersion());
-    //console.error("I in");
     if(debug === true){
         db.getRegionsStub(req, res, next);
     }else{
         db.getRegions(req, res, next);
     }
-
 });
 
 router.get('/api/dtp-chart', function (req, res, next) {
-    //console.error(db.getVersion());
-    //console.error("I in");
     if(debug){
         db.getDtpChartStub(req, res, next);
     }else{
         db.getDtpChart(req, res, next);
     }
-
 });
+
+router.use('/api/analysis-factor', factorRoutes);
 
 router.get('/api/injured-list', function (req, res, next) {
     //console.error(db.getVersion());
     //console.error("I in");
     db.getInjuredList(req, res, next);
-});
-
-router.get('/api/dtp-factor', function (req, res, next) {
-    //console.error(db.getVersion());
-    //console.error("I in");
-    if(debug === true){
-        db.getFactorListStub(req, res, next);
-    }else{
-        db.getFactorList(req, res, next);
-    }
-
-
-});
-
-router.get('/api/analysis-factor', function (req, res, next) {
-    //console.error(db.getVersion());
-    //console.error("I in");
-    if(debug === true) {
-        db.getAnalysisFactorListStub(req, res, next);
-    }else{
-        db.getAnalysisFactorList(req, res, next);
-    }
 });
 
 router.get('/api/factor-chart', function (req, res, next) {
