@@ -5,7 +5,7 @@ var express = require('express');
 var router = express.Router();
 const db = require('../db/queries');
 const upload = require('../utils/upload');
-const read_excel = require('../utils/read_excel');
+const rx = require('../utils/read_excel');
 var path = require('path');
 
 let debug = false;
@@ -58,9 +58,12 @@ router.get('/api/factor-chart', function (req, res, next) {
 // Set up a route for file uploads
 router.post('/api/upload', upload.single('file'), (req, res) => {
     // Handle the uploaded file
-    let filepath=path.join(__dirname, '../uploads/'+req.file.filename);
-    let output = read_excel.getJsonFromExcell(filepath);
-    res.json({message: 'File uploaded successfully!'+output+" "+filepath});
+    //let filepath = path.join(__dirname, '../uploads/' + req.file.filename);
+
+    //rx.getJsonFromExcell(filepath, res);
+
+    res.send("file uploaded succesfully")
+
 });
 
 function paginatedResults(model) {
