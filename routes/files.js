@@ -5,14 +5,10 @@ const db = require('../db/queries');
 const index = require('../routes/index');
 const upload = require("../utils/upload");
 var path = require('path');
-// router.get('/', (req, res) => {
-//     // console.log(users);
-//     if (index.isDebug() === true) {
-//         db.getFilesListStub(req, res);
-//     } else {
-//         db.getFilesList(req, res);
-//     }
-// })
+router.get('/', (req, res) => {
+    let filePath = path.join(__dirname, "../files/shablon.xlsx");
+    res.download(filePath);
+})
 // router.get('/:id', (req, res) => {
 //     if (index.isDebug() === true) {
 //         db.getAnalysisFactorStub(req, res);
@@ -39,7 +35,14 @@ router.delete('/:id', (req, res) => {
 
 router.post('/upload/:id', upload.single('file'), (req, res) => {
     let filepath = path.join(__dirname, '../uploads/' + req.file.filename);
-    db.writeDataFromFile(req, res, filepath,);
+
+    if (index.isDebug() === true) {
+        db.writeDataFromFileStub(req, res, filepath,);
+    } else {
+        db.writeDataFromFile(req, res, filepath,);
+    }
+
+
 
 });
 
