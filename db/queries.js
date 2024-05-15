@@ -956,6 +956,14 @@ const deleteAnalysisMethod = (request, response) => {
     });
 };
 
+const deleteFactorDataStub = (request, response) => {
+
+    let result =
+        {"isSuccess": true, "message": "", "data": []};
+
+    response.status(200).json(result);
+};
+
 const deleteFactorData = (request, response) => {
     const {id} = request.params;
 
@@ -1764,13 +1772,23 @@ const getUserById = (request, response) => {
         response.status(200).json(results.rows);
     });
 };
+const writeDataFromFileStub = (request, response) => {
+
+    let result =
+        {
+            "isSuccess": true,
+            "message": "File uploaded successfully!",
+            "json": "[{\"date\":\"2021-01-01T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-02T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-01-03T00:00:00.000Z\",\"value\":5},{\"date\":\"2021-01-04T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-05T00:00:00.000Z\",\"value\":6,\"region_code\":2},{\"date\":\"2021-01-06T00:00:00.000Z\",\"value\":44},{\"date\":\"2021-01-07T00:00:00.000Z\",\"value\":3},{\"date\":\"2021-01-08T00:00:00.000Z\",\"value\":36},{\"date\":\"2021-01-09T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-01-10T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-11T00:00:00.000Z\",\"value\":17},{\"date\":\"2021-01-12T00:00:00.000Z\",\"value\":12},{\"date\":\"2021-01-13T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-01-14T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-15T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-01-16T00:00:00.000Z\",\"value\":5},{\"date\":\"2021-01-17T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-18T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-01-19T00:00:00.000Z\",\"value\":44},{\"date\":\"2021-01-20T00:00:00.000Z\",\"value\":3},{\"date\":\"2021-01-21T00:00:00.000Z\",\"value\":36},{\"date\":\"2021-01-22T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-01-23T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-24T00:00:00.000Z\",\"value\":17},{\"date\":\"2021-01-25T00:00:00.000Z\",\"value\":12},{\"date\":\"2021-01-26T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-01-27T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-28T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-01-29T00:00:00.000Z\",\"value\":5},{\"date\":\"2021-01-30T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-01-31T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-02-01T00:00:00.000Z\",\"value\":44},{\"date\":\"2021-02-02T00:00:00.000Z\",\"value\":3},{\"date\":\"2021-02-03T00:00:00.000Z\",\"value\":36},{\"date\":\"2021-02-04T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-02-05T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-02-06T00:00:00.000Z\",\"value\":17},{\"date\":\"2021-02-07T00:00:00.000Z\",\"value\":12},{\"date\":\"2021-02-08T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-02-09T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-02-10T00:00:00.000Z\",\"value\":2},{\"date\":\"2021-02-11T00:00:00.000Z\",\"value\":5},{\"date\":\"2021-02-12T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-02-13T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-02-14T00:00:00.000Z\",\"value\":44},{\"date\":\"2021-02-15T00:00:00.000Z\",\"value\":3},{\"date\":\"2021-02-16T00:00:00.000Z\",\"value\":36},{\"date\":\"2021-02-17T00:00:00.000Z\",\"value\":6},{\"date\":\"2021-02-18T00:00:00.000Z\",\"value\":1},{\"date\":\"2021-02-19T00:00:00.000Z\",\"value\":17}]"
+        };
+    response.status(200).json(result);
+};
+
 const writeDataFromFile = async (request, response, filepath) => {
     const analysis_factor_id = parseInt(request.params.id);
 
     //readfile
 
     rx.getJsonFromExcell(request, response, filepath, this);
-
 
 
     // pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
@@ -4359,5 +4377,7 @@ module.exports = {
     getAnalysisCorrelationCalc,
     getAnalysisCorrelationCalcStub,
     writeDataFromFile,
-    deleteFactorData
+    writeDataFromFileStub,
+    deleteFactorData,
+    deleteFactorDataStub
 };
