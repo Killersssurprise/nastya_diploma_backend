@@ -7,6 +7,7 @@ const db = require('../db/queries');
 const upload = require('../utils/upload');
 const rx = require('../utils/read_excel');
 var path = require('path');
+const apifiles = require('./files');
 
 let debug = false;
 exports.isDebug = () => debug;
@@ -30,6 +31,14 @@ router.get('/api/dtp-chart', function (req, res, next) {
         db.getDtpChartStub(req, res, next);
     }else{
         db.getDtpChart(req, res, next);
+    }
+});
+
+router.get('/api/dtp-factor', function (req, res, next) {
+    if(debug){
+        db.getFactorListStub(req, res, next);
+    }else{
+        db.getFactorList(req, res, next);
     }
 });
 
@@ -65,6 +74,8 @@ router.post('/api/upload', upload.single('file'), (req, res) => {
     res.send("file uploaded succesfully")
 
 });
+
+router.use('/api/files', apifiles);
 
 function paginatedResults(model) {
     // middleware function
